@@ -79,11 +79,11 @@
 		},
 		created() {
 			this.readFile("org.txt").then(response => {
-				this.org = response.split("\r\n");
+				this.org = response.split("\n");
 				console.log(JSON.stringify(this.org));
 			});
 			this.readFile("dst.txt").then(response => {
-				this.dst = response.split("\r\n");
+				this.dst = response.split("\n");
 				console.log(JSON.stringify(this.dst));
 			});
 		},
