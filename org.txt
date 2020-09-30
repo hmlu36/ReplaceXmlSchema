@@ -1,0 +1,4 @@
+<xsd:
+</xsd
+http://schemas.microsoft.com/sqlserver/2004/sqltypes
+http://schemas.microsoft.com/sqlserver/2004/sqltypes/sqltypes.xsd

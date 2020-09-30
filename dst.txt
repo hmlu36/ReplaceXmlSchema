@@ -1,0 +1,4 @@
+<xs:
+</xs
+http://www.opengis.net/gml
+http://schemas.opengis.net/gml/3.1.1/base/gml.xsd

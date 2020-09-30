@@ -1,0 +1,92 @@
+<html>
+
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<!-- CSS only -->
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+		integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+	<script src="https://unpkg.com/vue"></script>
+</head>
+
+<body>
+	<div id="app" class="container">
+		<div class="row">
+			<label class="col-6 text-center">原始</label>
+			<label class="col-6 text-center">要取代</label>
+		</div>
+		<div class="row">
+			<ul class="col-6">
+				<li v-for="entry in org">
+					{{entry}}
+				</li>
+			</ul>
+			<ul class="col-6">
+				<li v-for="entry in dst">
+					{{entry}}
+				</li>
+			</ul>
+		</div>
+		<div class="row">
+			<button class="btn btn-danger offset-5" v-on:click="transfer">轉換</button>
+		</div>
+		<div class="row">
+			<label class="col-6 text-center">取代前</label>
+			<label class="col-6 text-center">取代後</label>
+		</div>
+		<div class="row">
+			<textarea class="form-control col-6" rows="50" v-model="before">{{before}}</textarea>
+			<textarea class="form-control col-6" rows="50">{{after}}</textarea>
+		</div>
+	</div>
+</body>
+
+<script>
+	new Vue({
+		el: "#app",
+		data: {
+			org: [],
+			dst: [],
+			before: "",
+			after: ""
+		},
+		methods: {
+			async readFile(file) {
+				return fetch(file)
+					.then(r => r.text())
+					.then(data => {
+						return data;
+					},
+						response => {
+							console.log('Error loading json:', response)
+						});
+
+			},
+			transfer() {
+				this.after = this.before;
+				for (let i = 0; i < this.org.length; i++) {
+					//console.log("org:" + this.org[i] + ", dst:" + this.dst[i]);
+					this.after = this.after.replace(new RegExp(this.org[i], 'g'), this.dst[i]);
+				}
+
+				this.after = this.after.replace(new RegExp('xmlns:schema="[^"]+"', 'g'), 'xmlns:gml="http://www.opengis.net/gml"');
+				this.after = this.after.replace(new RegExp('xmlns:xsd="[^"]+" ', 'g'), '');
+				this.after = this.after.replace(new RegExp('xmlns:sqltypes="[^"]+"', 'g'), 'attributeFormDefault="unqualified"');
+				this.after = this.after.replace(new RegExp('targetNamespace[^"]+"[^"]+"', 'g'), 'xmlns:xs="http://www.w3.org/2001/XMLSchema"');
+
+				this.after = `<?xml version="1.0" encoding="UTF-8"?>` + "\r\n" + this.after;
+				//console.log(this.after);
+			}
+		},
+		created() {
+			this.readFile("org.txt").then(response => {
+				this.org = response.split("\r\n");
+				this.readFile("dst.txt").then(response => {
+					this.dst = response.split("\r\n");
+				});
+			});
+		},
+	})
+
+</script>
+
+</html>
